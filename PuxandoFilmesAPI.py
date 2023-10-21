@@ -7,14 +7,16 @@
 # - search the movie of the user choose with the year and gener selected;
 # - present the name and exactly year information of the random movie of system choose;
 
+
+from API_Functions import *
 import tkinter
 import tkinter.messagebox
 import customtkinter
 
+
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
-a = "chuleta"
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -33,9 +35,9 @@ class App(customtkinter.CTk):
         self.tabview.add("ChooseMovie")
         self.tabview.tab("ChooseMovie").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("ChooseMovie"), dynamic_resizing=False,
-                                                        values=["Aleatorio", "Aventura", "Terror", "Ação", "Suspense"])
-        self.optionmenu_1.grid(row=0, column=1, padx=20, pady=(20, 10))
+        self.optionmenu = customtkinter.CTkOptionMenu(self.tabview.tab("ChooseMovie"), dynamic_resizing=False,
+                                                        values=API_Movie())
+        self.optionmenu.grid(row=0, column=1, padx=20, pady=(20, 10))
 
         self.label = customtkinter.CTkLabel(self.tabview.tab("ChooseMovie"), text="...", fg_color="transparent")
         self.label.grid(row=2, column=1, padx=(5, 0), pady=(20, 10), sticky="ns")
@@ -47,8 +49,8 @@ class App(customtkinter.CTk):
                                                      text_color=("gray10", "#DCE4EE"), command=self.change_label_information)
         self.RandomButton.grid(row=3, column=0, padx=(20, 20), pady=(150, 20), sticky="sw")
 
-        self.ExitButton = customtkinter.CTkButton(master=self.tabview.tab("ChooseMovie"), text="Exit", fg_color="transparent", border_width=2,
-                                                     text_color=("gray10", "#DCE4EE"))
+        self.ExitButton = customtkinter.CTkButton(master=self.tabview.tab("ChooseMovie"), text="Sair", fg_color="transparent", border_width=2,
+                                                     text_color=("gray10", "#DCE4EE"), command=self.destroy)
         self.ExitButton.grid(row=3, column=2, padx=(20, 20), pady=(150, 20), sticky="se")
 
         # self.string_input_button = customtkinter.CTkButton(self.tabview.tab("ChooseMovie"), text="Open CTkInputDialog",
@@ -56,7 +58,7 @@ class App(customtkinter.CTk):
         # self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
 
     def change_label_information(self):
-        label = customtkinter.CTkLabel(self.tabview.tab("ChooseMovie"), text=(f"{a}"), fg_color="transparent")
+        label = customtkinter.CTkLabel(self.tabview.tab("ChooseMovie"), text=("vá toma no cu"), fg_color="transparent")
         label.grid(row=2, column=1, padx=(5, 0), pady=(20, 10), sticky="ns")
 
 
