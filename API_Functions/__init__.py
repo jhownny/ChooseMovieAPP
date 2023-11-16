@@ -1,5 +1,5 @@
 import API_Settings.keypath
-from API_Settings.Test_API import *
+from API_Settings.keypath import *
 import requests
 
 def API_Movie():
