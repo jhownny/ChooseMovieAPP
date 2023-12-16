@@ -12,6 +12,7 @@ def API_Movie():
 
     response = requests.get(url)
     response = response.json()
+
     response_name = response['genres']
     outnumber = 0
     ListGener = ['Aleatorio']

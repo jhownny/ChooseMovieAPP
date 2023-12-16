@@ -2,6 +2,7 @@
 # - need an option menu for choose the gener of the movie;
 # - need an input dialog for choose de year of the movie;
 # - need a button for exit and random functions.
+import PuxandoFilmesAPI
 
 # functions of processing information of the API:
 # - search the movie of the user choose with the year and gener selected;
@@ -52,9 +53,6 @@ class App(CTk, Validadores):
         self.label = CTkLabel(self.tabview.tab("ChooseMovie"), text="...", fg_color="transparent")
         self.label.grid(row=2, column=1, padx=(5, 0), pady=(20, 10), sticky="ns")
 
-        self.entry = CTkEntry(self.tabview.tab("ChooseMovie"), validate="key", validatecommand=self.vcmd)
-        self.entry.grid(row=1, column=1, padx=(5, 0), pady=(20, 10), sticky="ns")
-
         self.RandomButton = CTkButton(self.tabview.tab("ChooseMovie"), text="Aleatorizar", fg_color="transparent",
                                       border_width=2,
                                       text_color=("gray10", "#DCE4EE"), command=self.change_label_information)
@@ -71,8 +69,9 @@ class App(CTk, Validadores):
 
     def change_label_information(self):
 
-        label = CTkLabel(self.tabview.tab("ChooseMovie"), text="vá toma no cu", fg_color="transparent")
+        label = CTkLabel(self.tabview.tab("ChooseMovie"), text= f"Você selecionou: {self.optionmenu.get()}", fg_color="transparent")
         label.grid(row=2, column=1, padx=(5, 0), pady=(20, 10), sticky="ns")
+
 
     def validaEntradas(self):
 
@@ -81,6 +80,7 @@ class App(CTk, Validadores):
     def entrythings(self):
 
         valuething = int(self.entry.get())
+
 
 
 if __name__ == "__main__":
