@@ -10,6 +10,7 @@
 import PuxandoFilmesAPI
 from API_Functions import *
 from customtkinter import *
+from API_Functions.SearchingMovie import *
 
 set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"

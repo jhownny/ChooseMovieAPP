@@ -4,7 +4,7 @@ import requests
 
 def API_Movie():
 
-    url = f"{API_Settings.keypath.siteURL}/genre/movie/list?&language=pt&api_key={API_Settings.keypath.chave_API}"
+    url = f"{API_Settings.keypath.webURL}/genre/movie/list?&language=pt-BR&api_key={API_Settings.keypath.key_API}"
     headers = {
         "accept": "application/json",
         "Authorization": f"{API_Settings.keypath.Code}"
