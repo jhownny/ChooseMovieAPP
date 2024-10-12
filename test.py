@@ -1,162 +1,122 @@
-import tkinter
-import tkinter.messagebox
-import customtkinter
+import os
+from PIL import Image
+from customtkinter import *
+from API_Functions import API_GenerMovie, API_YearMovie
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+set_appearance_mode("Dark")  # Modos: "System", "Dark", "Light"
+set_default_color_theme("blue")  # Temas: "blue", "green", "dark-blue"
 
 
-class App(customtkinter.CTk):
+class App(CTk):
+
     def __init__(self):
         super().__init__()
 
-        # configure window
-        self.title("CustomTkinter complex_example.py")
+        # Configuração da janela
+        self.title("Choose Movie APP")
         self.geometry(f"{1100}x{580}")
 
-        # configure grid layout (4x4)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure((2, 3), weight=0)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
+        # Configuração da Grid
+        self.grid_columnconfigure(0, weight=1)  # Coluna à esquerda (Sidebar)
+        self.grid_columnconfigure(1, weight=2)  # Coluna central (Área de conteúdo)
+        self.grid_columnconfigure(2, weight=1)  # Coluna à direita (TabView)
+        self.grid_rowconfigure(0, weight=1)
 
-        # create sidebar frame with widgets
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="CustomTkinter", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
-        self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
-                                                                       command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
-        self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
-                                                               command=self.change_scaling_event)
-        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+        # Caminho da imagem (logo)
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "APP_Functions/Images")
+        self.logo_image = CTkImage(Image.open(os.path.join(image_path, "Logo.png")), size=(100, 100))
 
-        # create main entry and button
-        self.entry = customtkinter.CTkEntry(self, placeholder_text="CTkEntry")
-        self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "APP_Functions/Images")
+        self.Capa_Image = CTkImage(Image.open(os.path.join(image_path, "CapaFilmeTeste.jpg")), size=(245.33, 306.66))
 
-        self.main_button_1 = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
-        self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        # Sidebar com logo e OptionMenus dentro de um Frame (esquerda)
+        self.Sidebar_frame = CTkFrame(self, corner_radius=10)
+        self.Sidebar_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-        # create textbox
-        self.textbox = customtkinter.CTkTextbox(self, width=250)
-        self.textbox.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.Sidebar_frame_label = CTkLabel(self.Sidebar_frame, text="", image=self.logo_image, compound="top")
+        self.Sidebar_frame_label.grid(row=0, column=0, padx=20, pady=20)
 
-        # create tabview
-        self.tabview = customtkinter.CTkTabview(self, width=250)
-        self.tabview.grid(row=0, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.tabview.add("CTkTabview")
-        self.tabview.add("Tab 2")
-        self.tabview.add("Tab 3")
-        self.tabview.tab("CTkTabview").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
-        self.tabview.tab("Tab 2").grid_columnconfigure(0, weight=1)
+        # Menu de seleção de gênero
+        self.MovieOptionMenu = CTkOptionMenu(self.Sidebar_frame, values=API_GenerMovie())
+        self.MovieOptionMenu.grid(row=1, column=0, padx=20, pady=10)
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(self.tabview.tab("CTkTabview"), dynamic_resizing=False,
-                                                        values=["Value 1", "Value 2", "Value Long Long Long"])
-        self.optionmenu_1.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.combobox_1 = customtkinter.CTkComboBox(self.tabview.tab("CTkTabview"),
-                                                    values=["Value 1", "Value 2", "Value Long....."])
-        self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
-        self.string_input_button = customtkinter.CTkButton(self.tabview.tab("CTkTabview"), text="Open CTkInputDialog",
-                                                           command=self.open_input_dialog_event)
-        self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
-        self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Tab 2"), text="CTkLabel on Tab 2")
-        self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
+        # Menu de seleção de ano
+        self.YearOptionMenu = CTkOptionMenu(self.Sidebar_frame, values=API_YearMovie())
+        self.YearOptionMenu.grid(row=2, column=0, padx=20, pady=10)
 
-        # create radiobutton frame
-        self.radiobutton_frame = customtkinter.CTkFrame(self)
-        self.radiobutton_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        self.radio_var = tkinter.IntVar(value=0)
-        self.label_radio_group = customtkinter.CTkLabel(master=self.radiobutton_frame, text="CTkRadioButton Group:")
-        self.label_radio_group.grid(row=0, column=2, columnspan=1, padx=10, pady=10, sticky="")
-        self.radio_button_1 = customtkinter.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=0)
-        self.radio_button_1.grid(row=1, column=2, pady=10, padx=20, sticky="n")
-        self.radio_button_2 = customtkinter.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=1)
-        self.radio_button_2.grid(row=2, column=2, pady=10, padx=20, sticky="n")
-        self.radio_button_3 = customtkinter.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=2)
-        self.radio_button_3.grid(row=3, column=2, pady=10, padx=20, sticky="n")
+        # Frame Central com Label e botões abaixo
+        self.Center_frame = CTkFrame(self, corner_radius=10)
+        self.Center_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
-        # create slider and progressbar frame
-        self.slider_progressbar_frame = customtkinter.CTkFrame(self, fg_color="transparent")
-        self.slider_progressbar_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.slider_progressbar_frame.grid_columnconfigure(0, weight=1)
-        self.slider_progressbar_frame.grid_rowconfigure(4, weight=1)
-        self.seg_button_1 = customtkinter.CTkSegmentedButton(self.slider_progressbar_frame)
-        self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.progressbar_1 = customtkinter.CTkProgressBar(self.slider_progressbar_frame)
-        self.progressbar_1.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.progressbar_2 = customtkinter.CTkProgressBar(self.slider_progressbar_frame)
-        self.progressbar_2.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.slider_1 = customtkinter.CTkSlider(self.slider_progressbar_frame, from_=0, to=1, number_of_steps=4)
-        self.slider_1.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.slider_2 = customtkinter.CTkSlider(self.slider_progressbar_frame, orientation="vertical")
-        self.slider_2.grid(row=0, column=1, rowspan=5, padx=(10, 10), pady=(10, 10), sticky="ns")
-        self.progressbar_3 = customtkinter.CTkProgressBar(self.slider_progressbar_frame, orientation="vertical")
-        self.progressbar_3.grid(row=0, column=2, rowspan=5, padx=(10, 20), pady=(10, 10), sticky="ns")
+        # Label central (com lorem ipsum)
+        self.LoremLabel = CTkLabel(self.Center_frame, text=("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                                                            "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n" * 50),
+                                   wraplength=400, justify="left")
+        self.LoremLabel.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-        # create scrollable frame
-        self.scrollable_frame = customtkinter.CTkScrollableFrame(self, label_text="CTkScrollableFrame")
-        self.scrollable_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.scrollable_frame.grid_columnconfigure(0, weight=1)
-        self.scrollable_frame_switches = []
-        for i in range(100):
-            switch = customtkinter.CTkSwitch(master=self.scrollable_frame, text=f"CTkSwitch {i}")
-            switch.grid(row=i, column=0, padx=10, pady=(0, 20))
-            self.scrollable_frame_switches.append(switch)
+        # Botões (random e exit) abaixo do Frame central
+        self.Button_frame = CTkFrame(self)
+        self.Button_frame.grid(row=1, column=1, padx=20, pady=20, sticky="ew")
+        self.Button_frame.grid_columnconfigure((0, 1), weight=1)
 
-        # create checkbox and switch frame
-        self.checkbox_slider_frame = customtkinter.CTkFrame(self)
-        self.checkbox_slider_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        self.checkbox_1 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
-        self.checkbox_2 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_2.grid(row=2, column=0, pady=(20, 0), padx=20, sticky="n")
-        self.checkbox_3 = customtkinter.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
+        self.RandomButton = CTkButton(self.Button_frame, text="Random", command=self.randomize_movie)
+        self.RandomButton.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
 
-        # set default values
-        self.sidebar_button_3.configure(state="disabled", text="Disabled CTkButton")
-        self.checkbox_3.configure(state="disabled")
-        self.checkbox_1.select()
-        self.scrollable_frame_switches[0].select()
-        self.scrollable_frame_switches[4].select()
-        self.radio_button_3.configure(state="disabled")
-        self.appearance_mode_optionemenu.set("Dark")
-        self.scaling_optionemenu.set("100%")
-        self.optionmenu_1.set("CTkOptionmenu")
-        self.combobox_1.set("CTkComboBox")
-        self.slider_1.configure(command=self.progressbar_2.set)
-        self.slider_2.configure(command=self.progressbar_3.set)
-        self.progressbar_1.configure(mode="indeterminnate")
-        self.progressbar_1.start()
-        self.textbox.insert("0.0", "CTkTextbox\n\n" + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.\n\n" * 20)
-        self.seg_button_1.configure(values=["CTkSegmentedButton", "Value 2", "Value 3"])
-        self.seg_button_1.set("Value 2")
+        self.ExitButton = CTkButton(self.Button_frame, text="Exit", command=self.quit)
+        self.ExitButton.grid(row=0, column=1, padx=20, pady=10, sticky="ew")
 
-    def open_input_dialog_event(self):
-        dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
-        print("CTkInputDialog:", dialog.get_input())
+        # TabView à direita com Frame centralizado e Label abaixo
+        self.TabView_frame = CTkTabview(self)
+        self.TabView_frame.grid(row=0, column=2, padx=20, pady=20, sticky="nsew")
 
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        customtkinter.set_appearance_mode(new_appearance_mode)
+        # Adicionando uma aba ao TabView com o nome inicial
+        self.current_tab_name = "Movie Tab"  # Nome inicial da aba
+        self.TabView_Self = self.TabView_frame.add(self.current_tab_name)
 
-    def change_scaling_event(self, new_scaling: str):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        customtkinter.set_widget_scaling(new_scaling_float)
+        # Configurando a imagem e os detalhes do filme na aba
+        self.TabView_Capa = CTkLabel(self.TabView_frame.tab(self.current_tab_name), text="", image=self.Capa_Image,
+                                     compound="top")
+        self.TabView_Capa.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
-    def sidebar_button_event(self):
-        print("sidebar_button click")
+        self.Inner_frame = CTkFrame(self.TabView_frame.tab(self.current_tab_name), corner_radius=10)
+        self.Inner_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
+
+        self.DetailsLabel = CTkLabel(self.TabView_frame.tab(self.current_tab_name), text="Detalhes do Filme",
+                                     font=CTkFont(size=15))
+        self.DetailsLabel.grid(row=1, column=0, padx=20, pady=10, sticky="n")
+
+        # Botão para mudar o nome da aba
+        self.ChangeTabButton = CTkButton(self.Sidebar_frame, text="Alterar Nome da Aba",
+                                         command=self.change_tabview_title)
+        self.ChangeTabButton.grid(row=3, column=0, padx=20, pady=10)
+
+    def randomize_movie(self):
+        # Função de randomizar filme
+        selected_genre = self.MovieOptionMenu.get()  # Obtém o gênero selecionado
+        print(f"Filme selecionado: {selected_genre}")
+
+    def change_tabview_title(self):
+        # Atualiza o nome da aba no TabView com o gênero selecionado
+        selected_genre = self.MovieOptionMenu.get()  # Obtém o gênero selecionado
+
+        # Remover a aba antiga
+        self.TabView_frame.delete(self.current_tab_name)
+
+        # Criar nova aba com o novo nome
+        self.current_tab_name = selected_genre
+        self.TabView_Self = self.TabView_frame.add(self.current_tab_name)
+
+        # Recriar o conteúdo da aba
+        self.TabView_Capa = CTkLabel(self.TabView_frame.tab(self.current_tab_name), text="", image=self.Capa_Image,
+                                     compound="top")
+        self.TabView_Capa.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+
+        self.Inner_frame = CTkFrame(self.TabView_frame.tab(self.current_tab_name), corner_radius=10)
+        self.Inner_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
+
+        self.DetailsLabel = CTkLabel(self.TabView_frame.tab(self.current_tab_name), text="Detalhes do Filme",
+                                     font=CTkFont(size=15))
+        self.DetailsLabel.grid(row=1, column=0, padx=20, pady=10, sticky="n")
 
 
 if __name__ == "__main__":
